@@ -11,18 +11,36 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  cpf       String   @unique
-  birthDate DateTime
-  email     String   @unique
-  password  String   @unique
+  id         Int      @id @default(autoincrement())
+  name       String
+  cpf        String   @unique
+  birth_date DateTime
+  email      String   @unique
+  password   String   @unique
 }
 
 model Product {
-  id           Int     @id @default(autoincrement())
-  amountToPaid Decimal
-  description  String
-  model        String
-  manufacturer String
+  id               Int     @id @default(autoincrement())
+  avaluation_value Decimal @map("evaluation")
+  description      String
+  model            String
+
+  Company     Company       @relation(fields: [company_id], references: [id])
+  company_id  Int
+  Evaluations Evaluations[]
+}
+
+model Evaluations {
+  id          Int     @id @default(autoincrement())
+  score       Int
+  preferences String  @default("None")
+  would_buy   String
+  product     Product @relation(fields: [productId], references: [id])
+  productId   Int
+}
+
+model Company {
+  id       Int       @id @default(autoincrement())
+  products Product[]
+  segment  String
 }
