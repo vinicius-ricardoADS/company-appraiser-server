@@ -48,5 +48,6 @@ model Evaluations {
 model Company {
   id       Int       @id @default(autoincrement())
   products Product[]
+  name     String
   segment  String
 }
