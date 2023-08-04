@@ -20,10 +20,13 @@ model User {
 }
 
 model Product {
-  id               BigInt  @id @default(autoincrement())
-  avaluation_value Boolean @map("evaluation")
+  id               BigInt   @id @default(autoincrement())
+  avaluation_value Boolean  @map("evaluation")
   description      String
   model            String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  imageUrl         String?
 
   Company     Company       @relation(fields: [company_id], references: [id])
   company_id  BigInt
