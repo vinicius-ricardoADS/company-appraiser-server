@@ -3,6 +3,7 @@ import { FastifyInstance } from 'fastify'
 import { createWriteStream } from 'node:fs'
 import { pipeline } from 'node:stream'
 import { promisify } from 'node:util'
+import { prisma } from '../lib/prisma'
 
 const pump = promisify(pipeline)
 
@@ -33,6 +34,21 @@ export async function uploadRoutes(app: FastifyInstance) {
 
     const fullUrl = request.protocol.concat('://').concat(request.hostname)
     const fileUrl = new URL(`/uploads/${upload.filename}`, fullUrl).toString()
+
+    const lastProduct = await prisma.product.findFirst({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    await prisma.product.update({
+      where: {
+        id: lastProduct?.id,
+      },
+      data: {
+        imageUrl: fileUrl
+      }
+    })
 
     return { fileUrl };
   });
