@@ -3,23 +3,26 @@ import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import multipart from '@fastify/multipart';
 import { resolve } from 'node:path';
+import { uploadRoutes } from './routes/uploads';
 
 const app = Fastify();
 
 app.register(multipart);
 
 app.register(require('@fastify/static'), {
-    root: resolve(__dirname, '../uploads'),
-    prefix: '/uploads',
+  root: resolve(__dirname, '../uploads'),
+  prefix: '/uploads',
 });
 
 app.register(cors, {
-    origin: true,
+  origin: true,
 });
 
 app.register(jwt, {
-    secret: 'appraiser',
+  secret: 'appraiser',
 });
+
+app.register(uploadRoutes);
 
 app
   .listen({
