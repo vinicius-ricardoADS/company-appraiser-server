@@ -32,10 +32,23 @@ export async function productRoutes(app: FastifyInstance) {
             }
         });
 
-        if (products.length > 0)
-            reply.send({
-                products
-            });
+        if (products.length > 0) {
+            reply.send(products.map((product: { 
+                id: number,
+                avaluation_value: number,
+                description: string,
+                model: string,
+                imageUrl: string | null,
+            }) => {
+                return {
+                    id: product.id,
+                    avaluation_value: product.avaluation_value,
+                    description: product.description,
+                    model: product.model,
+                    imageUrl: product.imageUrl
+                }
+            }));
+        }
         reply.send({
             message: 'Nothing',
         })
