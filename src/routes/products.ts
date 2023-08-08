@@ -12,17 +12,30 @@ export async function productRoutes(app: FastifyInstance) {
         })
       
         const { model, description, avaluation_value, company_id } = bodySchema.parse(request.body);
-      
-        const product = await prisma.product.create({
-            data: {
-              model,
-              description,
-              avaluation_value,
-              company_id
+
+        const company = await prisma.company.findUnique({
+            where: {
+                id: company_id
             },
-        })
+        });
+
+        if (company) {
+
+            const product = await prisma.product.create({
+                data: {
+                  model,
+                  description,
+                  avaluation_value,
+                  company_id
+                },
+            })
+          
+            reply.status(200).send({product});
+        }
       
-        return product
+        reply.status(500).send({
+            message: 'Company not found',
+        });
     });
 
     app.get('/products', async (request, reply) => {
@@ -50,7 +63,7 @@ export async function productRoutes(app: FastifyInstance) {
             }));
         }
         reply.send({
-            message: 'Nothing',
+            message: 'No product',
         })
     })
 }
