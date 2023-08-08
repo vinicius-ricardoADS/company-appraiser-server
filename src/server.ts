@@ -1,6 +1,5 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import jwt from '@fastify/jwt';
 import multipart from '@fastify/multipart';
 import { resolve } from 'node:path';
 import { uploadRoutes } from './routes/uploads';
@@ -31,4 +30,4 @@ app
   })
   .then(() => {
     console.log('🚀 HTTP server running on port http://localhost:3333')
-  })
+  });
