@@ -35,7 +35,7 @@ export async function uploadRoutes(app: FastifyInstance) {
     const fullUrl = request.protocol.concat('://').concat(request.hostname)
     const fileUrl = new URL(`/uploads/${upload.filename}`, fullUrl).toString()
 
-    const lastProduct = await prisma.product.findFirst({
+    /* const lastProduct = await prisma.product.findFirst({
       orderBy: {
         createdAt: 'desc'
       }
@@ -48,7 +48,7 @@ export async function uploadRoutes(app: FastifyInstance) {
       data: {
         imageUrl: fileUrl
       }
-    })
+    }) */
 
     return { fileUrl };
   });

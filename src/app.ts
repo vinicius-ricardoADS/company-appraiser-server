@@ -4,6 +4,8 @@ import jwt from '@fastify/jwt';
 import multipart from '@fastify/multipart';
 import { resolve } from 'node:path';
 import { uploadRoutes } from './routes/uploads';
+import { productRoutes } from './routes/products';
+import { companyRoutes } from './routes/company';
 
 const app = Fastify();
 
@@ -18,11 +20,9 @@ app.register(cors, {
   origin: true,
 });
 
-app.register(jwt, {
-  secret: 'appraiser',
-});
-
 app.register(uploadRoutes);
+app.register(productRoutes);
+app.register(companyRoutes);
 
 app
   .listen({
