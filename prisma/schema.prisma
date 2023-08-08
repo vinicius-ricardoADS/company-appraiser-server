@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id         String   @id
+  id         Int      @id @default(autoincrement())
   name       String
   cpf        String   @unique
   birth_date DateTime
@@ -20,8 +20,8 @@ model User {
 }
 
 model Product {
-  id               String   @id
-  avaluation_value Boolean  @map("evaluation")
+  id               Int      @id @default(autoincrement())
+  avaluation_value Decimal  @map("evaluation")
   description      String
   model            String
   createdAt        DateTime @default(now())
@@ -29,21 +29,21 @@ model Product {
   imageUrl         String?
 
   Company     Company       @relation(fields: [company_id], references: [id])
-  company_id  String
+  company_id  Int
   Evaluations Evaluations[]
 }
 
 model Evaluations {
-  id          String  @id
+  id          Int     @id @default(autoincrement())
   score       Int
   preferences String  @default("None")
   would_buy   String
   product     Product @relation(fields: [productId], references: [id])
-  productId   String
+  productId   Int
 }
 
 model Company {
-  id       String    @id
+  id       Int       @id @default(autoincrement())
   products Product[]
   name     String
   segment  String

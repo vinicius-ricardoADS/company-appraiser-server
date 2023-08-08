@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma';
 import { z } from 'zod';
-import { v4 as uuidv4 } from 'uuid'; 
 
 export async function companyRoutes(app: FastifyInstance) {
     app.post('/company', async (request, reply) => {
@@ -14,7 +13,6 @@ export async function companyRoutes(app: FastifyInstance) {
 
         const company = await prisma.company.create({
             data: {
-                id: uuidv4(),
                 name,
                 segment
             },
@@ -31,7 +29,7 @@ export async function companyRoutes(app: FastifyInstance) {
         });
 
         if (companys.length > 0) {
-            reply.send(companys.map((company: { id: string, name: string, segment: string }) => {
+            reply.send(companys.map((company: { id: number, name: string, segment: string }) => {
                 return {
                     id: company.id,
                     name: company.name,
