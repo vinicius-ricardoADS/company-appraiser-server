@@ -7,11 +7,11 @@ export async function productRoutes(app: FastifyInstance) {
         const bodySchema = z.object({
             model: z.string(),
             description: z.string(),
-            avaluation_value: z.number(),
+            discount_value: z.number(),
             company_id: z.number(),
         })
       
-        const { model, description, avaluation_value, company_id } = bodySchema.parse(request.body);
+        const { model, description, discount_value, company_id } = bodySchema.parse(request.body);
 
         const company = await prisma.company.findUnique({
             where: {
@@ -25,7 +25,7 @@ export async function productRoutes(app: FastifyInstance) {
                 data: {
                   model,
                   description,
-                  avaluation_value,
+                  discount_value,
                   company_id
                 },
             })
@@ -48,14 +48,14 @@ export async function productRoutes(app: FastifyInstance) {
         if (products.length > 0) {
             reply.send(products.map((product: { 
                 id: number,
-                avaluation_value: number,
+                discount_value: number,
                 description: string,
                 model: string,
                 imageUrl: string | null,
             }) => {
                 return {
                     id: product.id,
-                    avaluation_value: product.avaluation_value,
+                    discount_value: product.discount_value,
                     description: product.description,
                     model: product.model,
                     imageUrl: product.imageUrl
