@@ -20,13 +20,13 @@ model User {
 }
 
 model Product {
-  id               Int      @id @default(autoincrement())
-  avaluation_value Float    @map("evaluation")
-  description      String
-  model            String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  imageUrl         String?
+  id             Int      @id @default(autoincrement())
+  discount_value Float    @map("evaluation")
+  description    String
+  model          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  imageUrl       String?
 
   Company     Company       @relation(fields: [company_id], references: [id])
   company_id  Int
