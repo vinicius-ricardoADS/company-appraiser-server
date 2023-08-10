@@ -8,6 +8,10 @@ import { prisma } from '../lib/prisma'
 const pump = promisify(pipeline)
 
 export async function uploadRoutes(app: FastifyInstance) {
+  app.addHook('preHandler', async (request) => {
+    await request.jwtVerify();
+  });
+  
   app.post('/upload', async (request, reply) => {
     const upload = await request.file({
       limits: {

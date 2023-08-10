@@ -3,6 +3,10 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
 export async function productRoutes(app: FastifyInstance) {
+    app.addHook('preHandler', async (request) => {
+        await request.jwtVerify();
+    });
+
     app.post('/products', async (request, reply) => {
         const bodySchema = z.object({
             model: z.string(),
