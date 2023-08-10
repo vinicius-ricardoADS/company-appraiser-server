@@ -2,13 +2,8 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../lib/prisma';
 
 export const hashPassword = async (password: string) => {
-    await bcrypt.hash(password, 10)
-    .then(hash => {
-        return hash;
-    })
-    .catch(err => {
-        console.log(err);
-    });
+    const hash = await bcrypt.hash(password, 10);
+    return hash;
 }
 
 export const comparePassword = async (passwordEntered: string): Promise<boolean> => {
@@ -18,23 +13,10 @@ export const comparePassword = async (passwordEntered: string): Promise<boolean>
         }
     });
 
-    users.map((user:
-        {
-            id: number,
-            name: string,
-            cpf: string,
-            birth_date: Date,
-            email: string,
-            password: string,
-        }) => {
-            bcrypt.compare(passwordEntered, user.password)
-            .then(() => {
-                return true;
-            })
-            .catch(err => {
-                console.log(err);
-            });
-        });
+    for (const user of users) {
+        const result = await bcrypt.compare(passwordEntered, user.password);
+        if (result) return true;
+    }
+
     return false;
-    
 }

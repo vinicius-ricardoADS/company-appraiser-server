@@ -7,9 +7,11 @@ import { uploadRoutes } from './routes/uploads';
 import { productRoutes } from './routes/products';
 import { companyRoutes } from './routes/company';
 import { authRoutes } from './routes/auth';
+import { userRoutes } from './routes/users';
 
 const app = Fastify();
 
+app.register(require('@fastify/formbody'))
 app.register(multipart);
 
 app.register(require('@fastify/static'), {
@@ -26,6 +28,7 @@ app.register(jwt, {
 });
 
 app.register(authRoutes);
+app.register(userRoutes);
 app.register(uploadRoutes);
 app.register(productRoutes);
 app.register(companyRoutes);

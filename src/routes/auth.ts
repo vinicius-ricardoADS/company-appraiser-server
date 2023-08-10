@@ -32,7 +32,7 @@ export async function authRoutes(app: FastifyInstance) {
             },
             {
                 sub: user?.id.toString(),
-                expiresIn: '5 min',
+                expiresIn: 300,
             }
         );
 
