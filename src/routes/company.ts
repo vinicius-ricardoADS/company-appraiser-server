@@ -27,7 +27,7 @@ export async function companyRoutes(app: FastifyInstance) {
                 emptyFields: isValids
             })
         } else {
-            
+
             const company = await prisma.company.create({
                 data: {
                     name,
@@ -44,14 +44,20 @@ export async function companyRoutes(app: FastifyInstance) {
             orderBy: {
                 name: 'asc'
             },
+            include: {
+                products: {
+                    distinct: 'id'
+                }
+            }
         });
 
         if (companys.length > 0) {
-            reply.send(companys.map((company: { id: number, name: string, segment: string }) => {
+            reply.send(companys.map((company) => {
                 return {
                     id: company.id,
                     name: company.name,
                     segment: company.segment,
+                    products: company.products,
                 }
             }));
         }
