@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import { z } from 'zod'
 import { comparePassword } from '../middleware/hash';
 import { prisma } from '../lib/prisma';
+import { validationFields } from '../middleware/validation_fields';
 
 export async function authRoutes(app: FastifyInstance) {
     app.post('/register', async (request, reply) => {
@@ -11,6 +12,18 @@ export async function authRoutes(app: FastifyInstance) {
         });
 
         const { email, password } = userSchema.parse(request.body);
+
+        const isValids = validationFields({
+            email,
+            password,
+        });
+
+        if (isValids.length > 0) {
+            reply.status(401).send({
+                message: 'Empty fields',
+                emptyFields: isValids
+            })
+        }
 
         const user = await prisma.user.findUnique({
             where: {

@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
+import { validationFields } from "../middleware/validation_fields";
 
 export async function productRoutes(app: FastifyInstance) {
     app.addHook('preHandler', async (request) => {
@@ -16,6 +17,20 @@ export async function productRoutes(app: FastifyInstance) {
         })
       
         const { model, description, discount_value, company_id } = bodySchema.parse(request.body);
+
+        const isValids = validationFields({
+            model,
+            description,
+            discount_value,
+            company_id,
+        });
+
+        if (isValids.length > 0) {
+            reply.status(401).send({
+                message: 'Empty fields',
+                emptyFields: isValids
+            })
+        }
 
         const company = await prisma.company.findUnique({
             where: {

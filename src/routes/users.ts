@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma';
 import { z } from 'zod';
 import { hashPassword } from '../middleware/hash';
+import { validationFields } from '../middleware/validation_fields';
 
 export async function userRoutes(app: FastifyInstance) {
     app.post('/users', async (request, reply) => {
@@ -20,6 +21,21 @@ export async function userRoutes(app: FastifyInstance) {
             email,
             password
         } = userSchema.parse(request.body);
+
+        const isValids = validationFields({
+            name,
+            cpf,
+            birth_date,
+            email,
+            password
+        });
+
+        if (isValids.length > 0) {
+            reply.status(401).send({
+                message: 'Fields emptys',
+                emptysFields: isValids
+            });
+        }
 
         const passwordEncrypting = await hashPassword(password);
 
