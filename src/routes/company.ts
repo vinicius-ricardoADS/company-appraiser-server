@@ -26,16 +26,17 @@ export async function companyRoutes(app: FastifyInstance) {
                 message: 'Empty fields',
                 emptyFields: isValids
             })
+        } else {
+            
+            const company = await prisma.company.create({
+                data: {
+                    name,
+                    segment
+                },
+            });
+    
+            return company;
         }
-
-        const company = await prisma.company.create({
-            data: {
-                name,
-                segment
-            },
-        });
-
-        return company;
     });
 
     app.get('/company', async (request, reply) => {

@@ -23,40 +23,41 @@ export async function authRoutes(app: FastifyInstance) {
                 message: 'Empty fields',
                 emptyFields: isValids
             })
-        }
+        } else {
 
-        const user = await prisma.user.findUnique({
-            where: {
-                email
-            }
-        });
-
-        if (!user) {
-            reply.status(500).send({
-                message: 'Email or password invalids',
+            const user = await prisma.user.findUnique({
+                where: {
+                    email
+                }
             });
-        }
-
-        const isSamePassword = await comparePassword(password, user!.password);
-
-        if (!isSamePassword) {
-            reply.status(500).send({
-                message: 'Email or password invalids',
-            });
-        }
-
-        const token = app.jwt.sign(
-            {
-                name: user?.name,
-            },
-            {
-                sub: user?.id.toString(),
-                expiresIn: 300,
+    
+            if (!user) {
+                reply.status(500).send({
+                    message: 'Email or password invalids',
+                });
             }
-        );
-
-        reply.status(200).send({
-            token
-        })
+    
+            const isSamePassword = await comparePassword(password, user!.password);
+    
+            if (!isSamePassword) {
+                reply.status(500).send({
+                    message: 'Email or password invalids',
+                });
+            }
+    
+            const token = app.jwt.sign(
+                {
+                    name: user?.name,
+                },
+                {
+                    sub: user?.id.toString(),
+                    expiresIn: 300,
+                }
+            );
+    
+            reply.status(200).send({
+                token
+            })
+        }
     })
 }

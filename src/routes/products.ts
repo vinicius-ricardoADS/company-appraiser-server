@@ -29,55 +29,58 @@ export async function productRoutes(app: FastifyInstance) {
             reply.status(401).send({
                 message: 'Empty fields',
                 emptyFields: isValids
-            })
-        }
-
-        const company = await prisma.company.findUnique({
-            where: {
-                id: company_id
-            },
-        });
-
-        if (company) {
-
-            const product = await prisma.product.create({
-                data: {
-                  model,
-                  description,
-                  discount_value,
-                  company_id
+            });
+        } else {
+            const company = await prisma.company.findUnique({
+                where: {
+                    id: company_id
                 },
-            })
-          
-            reply.status(200).send({product});
+            });
+    
+            if (company) {
+    
+                const product = await prisma.product.create({
+                    data: {
+                      model,
+                      description,
+                      discount_value,
+                      company_id
+                    },
+                })
+              
+                reply.status(200).send({product});
+            }
+
+            reply.status(500).send({
+                message: 'Company not found',
+            });
         }
-      
-        reply.status(500).send({
-            message: 'Company not found',
-        });
+        
     });
 
     app.get('/products', async (request, reply) => {
         const products = await prisma.product.findMany({
             orderBy: {
                 createdAt: 'asc'
+            },
+            include: {
+                Company: {
+                    select: {
+                        name: true
+                    }
+                }
             }
         });
 
         if (products.length > 0) {
-            reply.send(products.map((product: { 
-                id: number,
-                discount_value: number,
-                description: string,
-                model: string,
-                imageUrl: string | null,
-            }) => {
+            reply.send(products.map((product) => {
                 return {
                     id: product.id,
                     discount_value: product.discount_value,
                     description: product.description,
                     model: product.model,
-                    imageUrl: product.imageUrl
+                    imageUrl: product.imageUrl,
+                    company: product.Company.name,
                 }
             }));
         }

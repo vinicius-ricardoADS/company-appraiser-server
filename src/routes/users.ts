@@ -35,29 +35,30 @@ export async function userRoutes(app: FastifyInstance) {
                 message: 'Fields emptys',
                 emptysFields: isValids
             });
-        }
+        } else {
+            
+            const passwordEncrypting = await hashPassword(password);
 
-        const passwordEncrypting = await hashPassword(password);
-
-        const user = await prisma.user.create({
-            data: {
-                name,
-                cpf,
-                birth_date: new Date(birth_date),
-                email,
-                password: passwordEncrypting
-            },
-        });
-
-        if (user) {
-            reply.status(200).send({
-                user
+            const user = await prisma.user.create({
+                data: {
+                    name,
+                    cpf,
+                    birth_date: new Date(birth_date),
+                    email,
+                    password: passwordEncrypting
+                },
+            });
+    
+            if (user) {
+                reply.status(200).send({
+                    user
+                });
+            }
+    
+            reply.status(400).send({
+                message: 'Error'
             });
         }
-
-        reply.status(400).send({
-            message: 'Error'
-        });
     });
 
     app.get('/users', async (request, reply) => {
