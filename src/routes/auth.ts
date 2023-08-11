@@ -18,10 +18,16 @@ export async function authRoutes(app: FastifyInstance) {
             }
         });
 
-        const isSamePassword = await comparePassword(password);
+        if (!user) {
+            reply.status(500).send({
+                message: 'Email or password invalids',
+            });
+        }
 
-        if (!user || !isSamePassword) {
-            reply.status(202).send({
+        const isSamePassword = await comparePassword(password, user!.password);
+
+        if (!isSamePassword) {
+            reply.status(500).send({
                 message: 'Email or password invalids',
             });
         }
