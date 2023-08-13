@@ -64,7 +64,7 @@ export async function productRoutes(app: FastifyInstance) {
                 createdAt: 'asc'
             },
             include: {
-                Company: {
+                company: {
                     select: {
                         name: true
                     }
@@ -80,7 +80,7 @@ export async function productRoutes(app: FastifyInstance) {
                     description: product.description,
                     model: product.model,
                     imageUrl: product.imageUrl,
-                    company: product.Company.name,
+                    company: product.company.name,
                 }
             }));
         }

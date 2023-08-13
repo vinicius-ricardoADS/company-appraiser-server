@@ -28,7 +28,7 @@ model Product {
   updatedAt      DateTime @updatedAt
   imageUrl       String?
 
-  Company     Company       @relation(fields: [company_id], references: [id])
+  company     Company       @relation(fields: [company_id], references: [id])
   company_id  Int
   Evaluations Evaluations[]
 }
