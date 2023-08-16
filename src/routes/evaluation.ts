@@ -48,7 +48,7 @@ export async function evaluationRoutes(app: FastifyInstance) {
                 }
             });
 
-            generateReport(product!.id, product!.model)
+            generateReport(product!.id, product!.model, product!.imageUrl)
 
             reply.status(200).send({ evaluation });
         }
