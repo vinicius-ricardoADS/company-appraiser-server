@@ -65,5 +65,56 @@ export async function companyRoutes(app: FastifyInstance) {
             message: 'Nothing',
         })
 
+    });
+
+    app.put('/company/:id', async (request, reply) => {
+        const paramsSchema = z.object({
+            id: z.string().uuid(),
+        });
+
+        const bodySchema = z.object({
+            nameEntered: z.string().nullable(),
+            segmentEntered: z.string().nullable(),
+        });
+
+        const { id } = paramsSchema.parse(request.params);
+
+        const { nameEntered, segmentEntered } = bodySchema.parse(request.body);
+
+        const company = await prisma.company.findFirstOrThrow({
+            where: {
+                id,
+            },
+        });
+
+        const companyUpdate = await prisma.company.update({
+            where: {
+                id
+            },
+            data: {
+                name: nameEntered === null ? company.name : nameEntered,
+                segment: segmentEntered === null ? company.segment : segmentEntered
+            }
+        });
+
+        if (companyUpdate) reply.status(200).send({ companyUpdate });
+
+        reply.status(401).send({
+            message: 'Error'
+        })
+    })
+
+    app.delete('/company/:id', async (request, reply) => {
+        const paramsShema = z.object({
+            id: z.string().uuid(),
+        });
+
+        const { id } = paramsShema.parse(request.params);
+
+        await prisma.company.delete({
+            where: {
+                id,
+            },
+        });
     })
 }

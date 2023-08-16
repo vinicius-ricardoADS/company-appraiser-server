@@ -13,7 +13,7 @@ export async function productRoutes(app: FastifyInstance) {
             model: z.string(),
             description: z.string(),
             discount_value: z.number(),
-            company_id: z.number(),
+            company_id: z.string().uuid(),
         })
       
         const { model, description, discount_value, company_id } = bodySchema.parse(request.body);

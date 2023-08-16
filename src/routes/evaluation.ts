@@ -13,7 +13,7 @@ export async function evaluationRoutes(app: FastifyInstance) {
             score: z.number(),
             preferences: z.string(),
             would_buy: z.number(),
-            product_id: z.number(),
+            product_id: z.string().uuid(),
         });
 
         const { score, preferences, would_buy, product_id } = evaluationSchema.parse(request.body);
