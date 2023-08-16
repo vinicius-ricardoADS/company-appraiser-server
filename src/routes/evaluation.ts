@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { validationFields } from "../middleware/validation_fields";
+import { generateReport } from "../middleware/generate_reports";
 
 export async function evaluationRoutes(app: FastifyInstance) {
     app.addHook('preHandler', async (request) => {
@@ -46,6 +47,8 @@ export async function evaluationRoutes(app: FastifyInstance) {
                     product_id
                 }
             });
+
+            generateReport(product!.id, product!.model)
 
             reply.status(200).send({ evaluation });
         }
