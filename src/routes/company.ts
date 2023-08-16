@@ -115,6 +115,14 @@ export async function companyRoutes(app: FastifyInstance) {
             where: {
                 id,
             },
+        }).then(() => {
+            reply.status(200).send({
+                message: 'Success',
+            });
+        }).catch(async (error) => {
+            reply.status(401).send({
+                message: error,
+            });
         });
     })
 }

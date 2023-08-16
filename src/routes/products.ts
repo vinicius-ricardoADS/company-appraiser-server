@@ -88,4 +88,26 @@ export async function productRoutes(app: FastifyInstance) {
             message: 'No product',
         })
     })
+
+    app.delete('/products', async (request, reply) => {
+        const paramShema = z.object({
+            id: z.string().uuid(),
+        });
+
+        const { id } = paramShema.parse(request.params);
+
+        await prisma.product.delete({
+            where: {
+                id
+            },
+        }).then(() => {
+            reply.status(200).send({
+                message: 'Success',
+            });
+        }).catch(async (error) => {
+            reply.status(401).send({
+                message: error,
+            })
+        })
+    })
 }
