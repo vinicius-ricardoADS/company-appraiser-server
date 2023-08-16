@@ -70,14 +70,7 @@ export async function userRoutes(app: FastifyInstance) {
 
         if (users.length > 0) {
             reply.status(200).send(
-                users.map((user: {
-                    id: number,
-                    name: string,
-                    cpf: string,
-                    birth_date: Date,
-                    email: string,
-                    password: string,
-                }) => {
+                users.map((user) => {
                     return {
                         id: user.id,
                         name: user.name,
@@ -85,6 +78,7 @@ export async function userRoutes(app: FastifyInstance) {
                         birth_date: user.birth_date,
                         email: user.email,
                         password: user.password,
+                        role: user.role,
                     }
                 })
             );
@@ -93,5 +87,5 @@ export async function userRoutes(app: FastifyInstance) {
         reply.send({
             message: 'No users',
         })
-    })
+    });
 }
