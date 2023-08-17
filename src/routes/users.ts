@@ -89,7 +89,7 @@ export async function userRoutes(app: FastifyInstance) {
         })
     });
 
-    app.delete('/users', async (request, reply) => {
+    app.delete('/users/:id', async (request, reply) => {
         const paramsSchema = z.object({
             id: z.string().uuid(),
         });

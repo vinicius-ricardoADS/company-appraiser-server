@@ -15,12 +15,32 @@ export async function generateReport(id: string, name: string, image: string | n
     const parts = image!.split('/');
     const fileName = parts[parts.length - 1];
 
-    doc.font("Helvetica-Bold").fontSize(tamanhoCodigo);
-    doc.image(resolve(__dirname, '..', '..', 'uploads', fileName), {
-        align: 'center',
-        valign: 'center',
-    })
-    doc.text("Código: ABC" + id, { align: "center" });
+    const imageUrl = resolve(__dirname, '..', '..', 'uploads', fileName);
+
+    const imageSize = sharp(imageUrl).metadata();
+
+    const imageWidth = (await imageSize).width;
+    const imageHeight = (await imageSize).height;
+
+    const centerX = (doc.page.width - imageWidth!) / 2;
+    const centerY = (doc.page.height - imageHeight!) / 2;
+
+    if (fileName.endsWith('.avif')) {
+        const jpegOutputPath = `${fileName}.jpg`;
+
+        await sharp(imageUrl).toFile(jpegOutputPath);
+
+        doc.font("Helvetica-Bold").fontSize(tamanhoCodigo);
+        doc.image(jpegOutputPath, centerX, centerY, {
+            width: imageWidth, height: imageHeight 
+        })
+    } else {
+        doc.font("Helvetica-Bold").fontSize(tamanhoCodigo);
+        doc.image(imageUrl, centerX, centerY, {
+            width: imageWidth, height: imageHeight 
+        });
+    }
+    doc.text("Código: " + id, { align: "center" });
     doc.moveDown();
 
     doc.font("Helvetica").fontSize(tamanhoTexto);
