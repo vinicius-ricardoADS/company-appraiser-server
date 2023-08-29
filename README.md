@@ -13,7 +13,7 @@ This project consists of building a back-end system for evaluating products from
  - Product registration and editing updatign the database.
  - Evaluation registration by users.
 
-## Technologies used
+## 🛠️ Technologies used
  - Typescript: A typed superset of JavaScript that compiles to plain JavaScript.
  - Zod: Is a TypeScript-first schema declaration and validation library.
  - Fastify: Is a web framework highly focused on providing the best developer experience with the least overhead and a powerful plugin architecture.
