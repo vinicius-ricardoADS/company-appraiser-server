@@ -3,7 +3,7 @@ This project consists of building a back-end system for evaluating products from
 
 ## 📋 Table of Contents
  - [Features](#-features)
- - [Technologies used](#-technologiesused)
+ - [Technologies used](#-technologies)
  - [Installation](#installation)
 
 ## 🚀 Features
