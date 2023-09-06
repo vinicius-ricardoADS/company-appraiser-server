@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma";
 import { z } from "zod";
 import { validationFields } from "../middleware/validation_fields";
-import { generateReport } from "../middleware/generate_reports";
+import { generateCoupon } from "../middleware/generate_reports";
 
 export async function evaluationRoutes(app: FastifyInstance) {
     app.addHook('preHandler', async (request) => {
@@ -48,9 +48,17 @@ export async function evaluationRoutes(app: FastifyInstance) {
                 }
             });
 
-            generateReport(product!.id, product!.model, product!.imageUrl)
+            const protocol = request.headers['x-forwarded-proto'] || 'http';
+  
+            const hostHeader = request.hostname;
+            
+            const fullUrl = `${protocol}://${hostHeader}`;
 
-            reply.status(200).send({ evaluation });
+            console.log(fullUrl);
+
+            const { fileUrl } = await generateCoupon(product!.id, product!.model, product!.imageUrl, fullUrl)
+
+            reply.status(200).send({ evaluation, fileUrl });
         }
     });
 

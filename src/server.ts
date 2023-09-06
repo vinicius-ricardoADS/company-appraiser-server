@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import jwt from '@fastify/jwt';
+import fastifyStatic from '@fastify/static';
 import { resolve } from 'node:path';
 import { uploadRoutes } from './routes/uploads';
 import { productRoutes } from './routes/products';
@@ -15,7 +16,7 @@ const app = Fastify();
 app.register(require('@fastify/formbody'))
 app.register(multipart);
 
-app.register(require('@fastify/static'), {
+app.register(fastifyStatic, {
   root: resolve(__dirname, '../uploads'),
   prefix: '/uploads',
 });

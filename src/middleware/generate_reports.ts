@@ -1,9 +1,14 @@
 import PDFDocument from 'pdfkit';
 import { createWriteStream } from "node:fs";
 import { resolve } from 'node:path'
+import { pipeline } from 'node:stream'
+import { promisify } from 'node:util'
 import sharp from 'sharp';
+import { FastifyRequest } from 'fastify/types/request';
 
-export async function generateReport(id: string, name: string, image: string | null) {
+const pump = promisify(pipeline);
+
+export async function generateCoupon(id: string, name: string, image: string | null, urlHost: string) {
     const doc = new PDFDocument({ 
         size: "A4",
         compress: true, 
@@ -47,6 +52,10 @@ export async function generateReport(id: string, name: string, image: string | n
     doc.text("Obrigado pela sua avaliação! Este é um comprovante gerado para " +
     "utilizá-lo como desconto na compra do produto.", { align: "justify" });
 
-    doc.pipe(createWriteStream(resolve(__dirname, '..', '..', 'reports', `${name.toLowerCase()}-discount.pdf`)));
+    doc.pipe(createWriteStream(resolve(__dirname, '..', '..', 'uploads', `${name.toLowerCase()}-discount.pdf`)));
     doc.end();
+
+    const fileUrl = new URL(`/uploads/${name.toLowerCase()}-discount.pdf`, urlHost).toString()
+
+    return { fileUrl };
 }
