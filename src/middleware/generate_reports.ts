@@ -1,12 +1,17 @@
 import PDFDocument from 'pdfkit';
+import PDFDocumentWithTables from 'pdfkit-table';
 import { createWriteStream } from "node:fs";
 import { resolve } from 'node:path'
-import { pipeline } from 'node:stream'
-import { promisify } from 'node:util'
 import sharp from 'sharp';
-import { FastifyRequest } from 'fastify/types/request';
+import { Company } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 
-const pump = promisify(pipeline);
+type TableDocument = {
+    title: string;
+    subtitle: string;
+    headers: string[];
+    rows: string[][];
+}
 
 export async function generateCoupon(id: string, name: string, image: string | null, urlHost: string) {
     const doc = new PDFDocument({ 
@@ -59,3 +64,107 @@ export async function generateCoupon(id: string, name: string, image: string | n
 
     return { fileUrl };
 }
+
+export async function generateCompanyReport(
+    company: Company,
+    fullUrl: string
+  ) {
+    const doc = new PDFDocumentWithTables({
+      margin: 30,
+      size: 'A4',
+      compress: true,
+    });
+  
+    const tamanhoCodigo = 14;
+    const tamanhoTexto = 12;
+  
+    doc.font('Helvetica-Bold').fontSize(tamanhoCodigo);
+  
+    doc.font('Helvetica').fontSize(tamanhoTexto);
+  
+    const products = await prisma.product.findMany({
+      where: {
+        company_id: company.id,
+      },
+      distinct: ['id'],
+      include: {
+        Evaluations: {
+          select: {
+            score: true,
+          },
+        },
+      },
+    });
+  
+    doc.moveDown();
+    doc.moveDown();
+    doc.moveDown();
+    doc.font('Helvetica-Bold').fontSize(12);
+  
+    // Cabeçalhos da tabela
+    const tableHeaders = ['Produto', 'Pontuação Total', 'Avaliações'];
+  
+    doc.fillColor('black');
+  
+    doc.font('Helvetica').fontSize(10);
+
+    const table: TableDocument = {
+        title: 'Relatório',
+        subtitle: `Relatório da empresa ${company.name}`,
+        headers: tableHeaders,
+        rows: [],
+    };
+  
+    products.forEach(async (product) => {
+        let totalScore = 0; 
+      
+        product.Evaluations.forEach((evaluation) => {
+          const score = evaluation.score
+          totalScore += score; 
+        });
+      
+        const row = [
+          product.model,
+          totalScore.toString(), 
+          product.count_evaluations.toString(),
+        ];
+      
+        table.rows.push([...row]);
+    });
+
+    const tableX = (doc.page.width - calculateTableWidth(table, doc)) / 2;
+
+    await doc.table(table, {
+        x: tableX,
+        width: 300,
+        columnsSize: [ 200, 100, 100 ],
+    })
+  
+    doc.pipe(
+      createWriteStream(
+        resolve(
+          __dirname,
+          '..',
+          '..',
+          'uploads',
+          `${company.name.toLowerCase()}-discount.pdf`
+        )
+      )
+    );
+    doc.end();
+  
+    const fileUrl = new URL(
+      `/uploads/${company.name.toLowerCase()}-discount.pdf`,
+      fullUrl
+    ).toString();
+  
+    return { fileUrl };
+}
+
+function calculateTableWidth(table: TableDocument, doc: PDFDocumentWithTables) {
+    const cellPadding = 10;
+    const totalCellWidth = table.headers.length * 100; // Supondo uma largura de célula padrão de 100
+  
+    return totalCellWidth + cellPadding * 2; // Adicione o padding
+}
+  

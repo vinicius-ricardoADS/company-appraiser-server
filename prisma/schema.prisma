@@ -34,9 +34,10 @@ model Product {
   updatedAt      DateTime @updatedAt
   imageUrl       String?
 
-  company     Company       @relation(fields: [company_id], references: [id])
-  company_id  String
-  Evaluations Evaluations[]
+  company           Company       @relation(fields: [company_id], references: [id])
+  company_id        String
+  count_evaluations Int
+  Evaluations       Evaluations[]
 }
 
 model Evaluations {

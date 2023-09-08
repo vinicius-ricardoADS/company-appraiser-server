@@ -10,6 +10,7 @@ import { companyRoutes } from './routes/company';
 import { authRoutes } from './routes/auth';
 import { userRoutes } from './routes/users';
 import { evaluationRoutes } from './routes/evaluation';
+import { reportsRoutes } from './routes/reports';
 
 const app = Fastify();
 
@@ -35,6 +36,7 @@ app.register(uploadRoutes);
 app.register(productRoutes);
 app.register(companyRoutes);
 app.register(evaluationRoutes);
+app.register(reportsRoutes);
 
 app
   .listen({

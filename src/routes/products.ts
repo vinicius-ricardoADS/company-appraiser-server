@@ -44,7 +44,8 @@ export async function productRoutes(app: FastifyInstance) {
                       model,
                       description,
                       discount_value,
-                      company_id
+                      company_id,
+                      count_evaluations: 0
                     },
                 })
               

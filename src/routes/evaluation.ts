@@ -44,7 +44,17 @@ export async function evaluationRoutes(app: FastifyInstance) {
                     score,
                     would_buy,
                     preferences,
-                    product_id
+                    product_id,
+                }
+            });
+
+
+            const updateProduct = await prisma.product.update({
+                where: {
+                    id: product!.id,
+                },
+                data: {
+                    count_evaluations: product?.count_evaluations! + 1,
                 }
             });
 
@@ -53,8 +63,6 @@ export async function evaluationRoutes(app: FastifyInstance) {
             const hostHeader = request.hostname;
             
             const fullUrl = `${protocol}://${hostHeader}`;
-
-            console.log(fullUrl);
 
             const { fileUrl } = await generateCoupon(product!.id, product!.model, product!.imageUrl, fullUrl)
 
