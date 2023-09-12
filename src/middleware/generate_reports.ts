@@ -91,6 +91,8 @@ export async function generateCompanyReport(
         Evaluations: {
           select: {
             score: true,
+            preferences: true,
+            would_buy: true,
           },
         },
       },
@@ -102,7 +104,7 @@ export async function generateCompanyReport(
     doc.font('Helvetica-Bold').fontSize(12);
   
     // Cabeçalhos da tabela
-    const tableHeaders = ['Produto', 'Pontuação Total', 'Avaliações'];
+    const tableHeaders = ['Produto', 'Taxa de aceitação', 'Avaliações'];
   
     doc.fillColor('black');
   
@@ -117,17 +119,44 @@ export async function generateCompanyReport(
   
     products.forEach(async (product) => {
         let totalScore = 0; 
+        let preferences = '';
+        let would_buy = '';
       
         product.Evaluations.forEach((evaluation) => {
-          const score = evaluation.score
-          totalScore += score; 
+          const score = evaluation.score;
+          preferences += evaluation.preferences + '\n';
+          would_buy += 'R$' + evaluation.would_buy + '\n';
+          totalScore += score;
         });
+
+        const evaluation_percent = ( totalScore / product.count_evaluations ) * 10;
       
         const row = [
           product.model,
-          totalScore.toString(), 
+          evaluation_percent.toString() + '%', 
           product.count_evaluations.toString(),
         ];
+
+        doc.font("Helvetica").fontSize(tamanhoTexto);
+        doc.text(`Preferências sobre o produto ${product.model}`, 
+        { align: "center" });
+
+        doc.moveDown();
+
+        doc.text(`${preferences}`, 
+        { align: "center" });
+
+        doc.moveDown();
+
+        doc.text(`Valores sugeridos de compra sobre o produto ${product.model}`, 
+        { align: "center" });
+
+        doc.moveDown();
+
+        doc.text(`${would_buy}`, 
+        { align: "center" });
+
+        doc.moveDown();
       
         table.rows.push([...row]);
     });
@@ -137,8 +166,7 @@ export async function generateCompanyReport(
     await doc.table(table, {
         x: tableX,
         width: 300,
-        columnsSize: [ 200, 100, 100 ],
-    })
+    });
   
     doc.pipe(
       createWriteStream(
@@ -147,7 +175,7 @@ export async function generateCompanyReport(
           '..',
           '..',
           'uploads',
-          `${company.name.toLowerCase()}-discount.pdf`
+          `${company.name.toLowerCase()}-report.pdf`
         )
       )
     );
@@ -163,8 +191,8 @@ export async function generateCompanyReport(
 
 function calculateTableWidth(table: TableDocument, doc: PDFDocumentWithTables) {
     const cellPadding = 10;
-    const totalCellWidth = table.headers.length * 100; // Supondo uma largura de célula padrão de 100
+    const totalCellWidth = table.headers.length * 100;
   
-    return totalCellWidth + cellPadding * 2; // Adicione o padding
+    return totalCellWidth + cellPadding * 2;
 }
   

@@ -6,11 +6,11 @@ const prisma = new PrismaClient();
 async function main() {
     const admin = await prisma.user.create({
         data: {
-            name: 'vinicius',
+            name: 'bianchi',
             cpf: '111.222.333-44',
-            birth_date: new Date('03/04/2002'),
-            email: 'vinicius@gmail.com',
-            password: await hashPassword('1234'),
+            birth_date: new Date('11/07/1990'),
+            email: 'administrador@gmail.com',
+            password: await hashPassword('admin120923'),
             role: Role.ADMIN
         }
     });
