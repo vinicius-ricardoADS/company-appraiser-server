@@ -19,7 +19,7 @@ export async function authRoutes(app: FastifyInstance) {
         });
 
         if (isValids.length > 0) {
-            reply.status(401).send({
+            reply.status(500).send({
                 message: 'Empty fields',
                 emptyFields: isValids
             })
@@ -32,7 +32,7 @@ export async function authRoutes(app: FastifyInstance) {
             });
     
             if (!user) {
-                reply.status(500).send({
+                reply.status(401).send({
                     message: 'Email or password invalids',
                 });
             }
@@ -40,14 +40,14 @@ export async function authRoutes(app: FastifyInstance) {
             const isSamePassword = await comparePassword(password, user!.password);
     
             if (!isSamePassword) {
-                reply.status(500).send({
+                reply.status(401).send({
                     message: 'Email or password invalids',
                 });
             }
     
             const token = app.jwt.sign(
                 {
-                    name: user!.name,
+                    email: user!.email,
                 },
                 {
                     sub: user!.id,
@@ -56,7 +56,6 @@ export async function authRoutes(app: FastifyInstance) {
     
             reply.status(200).send({
                 token,
-                user
             })
         }
     })
