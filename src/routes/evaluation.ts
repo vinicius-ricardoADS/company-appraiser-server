@@ -66,7 +66,7 @@ export async function evaluationRoutes(app: FastifyInstance) {
 
             const { fileUrl } = await generateCoupon(product!.id, product!.model, product!.imageUrl, fullUrl)
 
-            reply.status(200).send({ evaluation, fileUrl });
+            reply.status(200).send( fileUrl );
         }
     });
 

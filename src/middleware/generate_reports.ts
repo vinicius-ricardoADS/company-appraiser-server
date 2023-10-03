@@ -35,7 +35,7 @@ export async function generateCoupon(id: string, name: string, image: string | n
     const centerX = (doc.page.width - imageWidth!) / 2;
     const centerY = (doc.page.height - imageHeight!) / 2;
 
-    if (fileName.endsWith('.avif')) {
+    if (fileName.endsWith('.avif') || fileName.endsWith('.webp')) {
         const jpegOutputPath = `${fileName}.jpg`;
 
         await sharp(imageUrl).toFile(jpegOutputPath);
@@ -129,7 +129,8 @@ export async function generateCompanyReport(
           totalScore += score;
         });
 
-        const evaluation_percent = ( totalScore / product.count_evaluations ) * 10;
+        const evaluation_percent = product.count_evaluations === 0 ? 
+         0 : ( totalScore / product.count_evaluations ) * 10;
       
         const row = [
           product.model,
@@ -143,7 +144,7 @@ export async function generateCompanyReport(
 
         doc.moveDown();
 
-        doc.text(`${preferences}`, 
+        doc.text(`${preferences === '' ? 'Nenhum' : preferences}`, 
         { align: "center" });
 
         doc.moveDown();
@@ -153,7 +154,7 @@ export async function generateCompanyReport(
 
         doc.moveDown();
 
-        doc.text(`${would_buy}`, 
+        doc.text(`${would_buy === '' ? 'Nenhum' : would_buy}`, 
         { align: "center" });
 
         doc.moveDown();
@@ -175,7 +176,7 @@ export async function generateCompanyReport(
           '..',
           '..',
           'uploads',
-          `${company.name.toLowerCase()}-report.pdf`
+          `${company.name.toLowerCase()}-discount.pdf`
         )
       )
     );

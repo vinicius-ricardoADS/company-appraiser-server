@@ -89,9 +89,70 @@ export async function userRoutes(app: FastifyInstance) {
         })
     });
 
-    app.delete('/users/:id', async (request, reply) => {
+    app.get('/users/:email', async (request, reply) => {
+        const paramsSchema = z.object({
+            email: z.string(),
+        });
+
+        const { email } = paramsSchema.parse(request.params);
+
+        const user = await prisma.user.findUniqueOrThrow({
+            where: {
+                email,
+            },
+        });
+
+        if (user) {
+            reply.status(200).send(user);
+        } else {
+            reply.status(400).send({
+                message: 'Not found',
+            })
+        }
+    });
+
+    app.put('/users/:id', async (request, reply) => {
         const paramsSchema = z.object({
             id: z.string().uuid(),
+        });
+
+        const bodySchema = z.object({
+            password: z.string(),
+        });
+
+        const { id } = paramsSchema.parse(request.params);
+
+        const { password } = bodySchema.parse(request.body);
+
+        const user = await prisma.user.findFirstOrThrow({
+            where: {
+                id
+            }
+        });
+
+        if (user) {
+            await prisma.user.update({
+                where: {
+                    id
+                },
+                data: {
+                    password: await hashPassword(password)
+                }
+            }).then(() => {
+                reply.status(200).send({
+                    message: 'Success',
+                });
+            }).catch(async (error) => {
+                reply.status(401).send({
+                    message: error,
+                });
+            });
+        }
+    })
+
+    app.delete('/users/:id', async (request, reply) => {
+        const paramsSchema = z.object({
+            id: z.string(),
         });
 
         const { id } = paramsSchema.parse(request.params);

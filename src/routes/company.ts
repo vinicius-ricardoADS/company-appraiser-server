@@ -35,7 +35,7 @@ export async function companyRoutes(app: FastifyInstance) {
                 },
             });
     
-            return company;
+            reply.status(200).send( company );
         }
     });
 
@@ -67,19 +67,48 @@ export async function companyRoutes(app: FastifyInstance) {
 
     });
 
+    app.get('/company/:id', async (request, reply) => {
+        const paramsShema = z.object({
+            id: z.string().uuid(),
+        });
+
+        const { id } = paramsShema.parse(request.params);
+
+        const company = await prisma.company.findUniqueOrThrow({
+            where: {
+                id,
+            },
+            include: {
+                products: {
+                    orderBy: {
+                        model: 'asc'
+                    }
+                }
+            }
+        });
+
+        if (company) {
+            reply.status(200).send(company);
+        } else {
+            reply.status(400).send({
+                message: 'Not found',
+            })
+        }
+    })
+
     app.put('/company/:id', async (request, reply) => {
         const paramsSchema = z.object({
             id: z.string().uuid(),
         });
 
         const bodySchema = z.object({
-            nameEntered: z.string().nullable(),
-            segmentEntered: z.string().nullable(),
+            name: z.string().optional(),
+            segment: z.string().optional(),
         });
 
         const { id } = paramsSchema.parse(request.params);
 
-        const { nameEntered, segmentEntered } = bodySchema.parse(request.body);
+        const { name, segment } = bodySchema.parse(request.body);
 
         const company = await prisma.company.findFirstOrThrow({
             where: {
@@ -92,12 +121,12 @@ export async function companyRoutes(app: FastifyInstance) {
                 id
             },
             data: {
-                name: nameEntered === null ? company.name : nameEntered,
-                segment: segmentEntered === null ? company.segment : segmentEntered
+                name: name,
+                segment: segment
             }
         });
 
-        if (companyUpdate) reply.status(200).send({ companyUpdate });
+        if (companyUpdate) reply.status(200).send( companyUpdate );
 
         reply.status(401).send({
             message: 'Error'

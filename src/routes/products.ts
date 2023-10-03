@@ -90,7 +90,29 @@ export async function productRoutes(app: FastifyInstance) {
         })
     })
 
-    app.delete('/products', async (request, reply) => {
+    app.get('/products/:id', async (request, reply) => {
+        const paramShema = z.object({
+            id: z.string().uuid(),
+        });
+
+        const { id } = paramShema.parse(request.params);
+
+        const product = await prisma.product.findUniqueOrThrow({
+            where: {
+                id
+            }
+        });
+
+        if (product) {
+            reply.status(200).send(product);
+        } else {
+            reply.status(400).send({
+                message: 'Not found'
+            })
+        }
+    })
+
+    app.delete('/products/:id', async (request, reply) => {
         const paramShema = z.object({
             id: z.string().uuid(),
         });

@@ -32,9 +32,7 @@ export async function reportsRoutes(app: FastifyInstance) {
 
                 const { fileUrl } = await generateCompanyReport(company, fullUrl);
 
-                reply.status(200).send({
-                    report: fileUrl,
-                });
+                reply.status(200).send( fileUrl );
             } else {
                 reply.status(401).send({
                     message: 'Company not found',
