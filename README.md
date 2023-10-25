@@ -27,4 +27,4 @@ This project consists of building a back-end system for evaluating products from
 ## Installation
 1. MySQL: You must have a mysql server on your machine and have a `companyappraiser` database created on it.
 2. Env file: Create a .env file and add a `DATABASE_URL` variable that contains the path to the database on your machine's mysql server.
-3. E.g: `DATABASE_URL="mysql://user:password@localhost:3306/companyappraiser?schema=public"`
+-- E.g: `DATABASE_URL="mysql://user:password@localhost:3306/companyappraiser?schema=public"`
