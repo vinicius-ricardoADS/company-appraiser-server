@@ -5,6 +5,7 @@ This project consists of building a back-end system for evaluating products from
  - [Features](#-features)
  - [Technologies used](#-technologies)
  - [Installation](#installation)
+ - [Routes](#routes)
 
 ## 🚀 Features
  - User registration and login with Fastify JWT.
@@ -25,6 +26,12 @@ This project consists of building a back-end system for evaluating products from
  - Bcrypt: is cryptographic hashing algorithm, recommended for password hashing
 
 ## Installation
-1. MySQL: You must have a mysql server on your machine and have a `companyappraiser` database created on it.
-2. Env file: Create a .env file and add a `DATABASE_URL` variable that contains the path to the database on your machine's mysql server.
--- E.g: `DATABASE_URL="mysql://user:password@localhost:3306/companyappraiser?schema=public"`
+1. Run the `npm i` or `npm install` command to install the libraries used in the project. 
+2. MySQL: You must have a mysql server on your machine and have a `companyappraiser` database created on it.
+3. Env file: Create a .env file and add a `DATABASE_URL` variable that contains the path to the database on your machine's mysql server.
+4. E.g: `DATABASE_URL="mysql://user:password@localhost:3306/companyappraiser?schema=public"`
+5. To run existing migrations and create tables in the database, run `npx prisma migrate dev`.
+6. Then, to create an administrator to initially access the system, run `npx prisma db seed`, after executing the command in the terminal it will display the created administrator, as well as your access data such as email and password.
+7. To run the project, run the `npm run dev` command.
+
+## Routes
