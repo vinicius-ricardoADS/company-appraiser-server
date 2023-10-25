@@ -25,6 +25,6 @@ This project consists of building a back-end system for evaluating products from
  - Bcrypt: is cryptographic hashing algorithm, recommended for password hashing
 
 ## Installation
-- MySQL: You must have a mysql server on your machine and have a `companyappraiser` database created on it.
-- Env file: Create a .env file and add a `DATABASE_URL` variable that contains the path to the database on your machine's mysql server.
+1 MySQL: You must have a mysql server on your machine and have a `companyappraiser` database created on it.
+2 Env file: Create a .env file and add a `DATABASE_URL` variable that contains the path to the database on your machine's mysql server.
   - E.g: `DATABASE_URL="mysql://user:password@localhost:3306/companyappraiser?schema=public"`
